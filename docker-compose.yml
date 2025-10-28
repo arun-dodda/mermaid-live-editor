@@ -3,19 +3,22 @@ services:
   mermaid:
     build:
       context: .
-      target: mermaid-dev
-    volumes:
-      - ./src:/app/src
+      target: mermaid  # Changed from mermaid-dev to mermaid (production)
+      args:
+        - MERMAID_RENDERER_URL=${MERMAID_RENDERER_URL:-https://mermaid.ink}
+        - MERMAID_KROKI_RENDERER_URL=${MERMAID_KROKI_RENDERER_URL:-https://kroki.io}
+        - MERMAID_ANALYTICS_URL=${MERMAID_ANALYTICS_URL:-}
+        - MERMAID_DOMAIN=${MERMAID_DOMAIN:-mermaid.live}
+        - MERMAID_IS_ENABLED_MERMAID_CHART_LINKS=${MERMAID_IS_ENABLED_MERMAID_CHART_LINKS:-false}
     expose:
-      - "3000"
-      - "24678"
+      - "8080"  # Changed from 3000 to 8080 (nginx port in production)
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
+      - NODE_ENV=production
     labels:
       - "coolify.managed=true"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080"]
       interval: 30s
       timeout: 10s
       retries: 3
