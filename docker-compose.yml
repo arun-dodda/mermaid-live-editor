@@ -6,9 +6,9 @@ services:
       target: mermaid-dev
     volumes:
       - ./src:/app/src
-    ports:
-      - "${PORT:-3000}:3000"
-      - "24678:24678"
+    expose:
+      - "3000"
+      - "24678"
     environment:
       - NODE_ENV=${NODE_ENV:-production}
     labels:
